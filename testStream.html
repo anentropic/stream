@@ -10,6 +10,20 @@
 <script type="text/javascript">
 
 //COME WITH ME IF YOU WANT TO LIVE
+var s = new DUI.Stream();
+
+s.listen('text/html', function(payload) {
+    $j('body').append(payload);
+    
+    alert('finished the HTML packet');
+});
+
+s.listen('text/javascript', function(payload) {
+    var tag = '&lt;script type="text/javascript">' + payload + '&lt;/script>';
+    $j(tag).appendTo('body');
+});
+
+s.load('testStreamData.php');
 
 </script>
 

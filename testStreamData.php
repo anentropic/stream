@@ -2,20 +2,22 @@
 
 $count = 1024 * 512;
 
-echo '<<<text/plain|||';
+echo '<![text/html[';
+
+echo '<em>';
+
 for($i = 0; $i < $count ; $i++) {
     echo 'X';
-    
-    /* if($i > 1 && $i % floor($count / 3) == 0) {
-        echo '|||';
-    } */
 }
-echo '|||>>>';
 
-echo "\n<<<text/javascript|||/*";
+echo '</em>';
+
+echo ']]>';
+
+echo "\n\n<![text/javascript[/*";
 for($i = 0; $i < $count ; $i++) {
     echo 'Y';
 }
 echo "*/
-console.log('huuurrrr');|||>>>";
+console.log('huuurrrr');]]>";
 ?>
