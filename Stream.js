@@ -1,5 +1,5 @@
 DUI.create('Stream', {
-    ping: null,
+    pong: null,
     lastLength: 0,
     streams: [],
     listeners: {},
@@ -19,30 +19,34 @@ DUI.create('Stream', {
     },
     
     readyStateNanny: function() {
-        if((this.req.readyState == 3 || this.req.readyState == 4) && this.ping == null) {
-            console.log('state 3');
+        if(this.req.readyState == 3 && this.ping == null) {
+            //console.log('state 3');
             
-            this.ping = window.setInterval(function() {
-                var length = this.req.responseText.length;
-                
-                var packetSize = length - this.lastLength;
-                
-                var packet = this.req.responseText.substr(this.lastLength, packetSize);
-                
-                this.processPacket(packet);
-                
-                this.lastLength = length;
-            }.bind(this), 15);   
+            //start pinging
+            this.pong = window.setInterval(this.ping, 15);   
         }
         
         if(this.req.readyState == 4) {
-            console.log('state 4');
+            //console.log('state 4');
             
-            setTimeout(function() {
-                window.clearInterval(this.ping);
-                //console.dir(this.streams);
-            }.bind(this), 15);
+            //stop the insanity!
+            clearInterval(this.pong);
+            
+            //one last ping to clean up
+            this.ping();
         }
+    },
+    
+    ping: function() {
+        var length = this.req.responseText.length;
+        
+        var packetSize = length - this.lastLength;
+        
+        var packet = this.req.responseText.substr(this.lastLength, packetSize);
+        
+        this.processPacket(packet);
+        
+        this.lastLength = length;
     },
     
     processPacket: function(packet) {
@@ -52,11 +56,7 @@ DUI.create('Stream', {
         var startFlag = packet.search(/<\!\[.+\[/);
         var endFlag = packet.search(/\]\]>/);
         
-        console.log(packet.length, ' --- ', startFlag, ' / ', endFlag, ': ', packet);
-        
-        //random custom packets: <<<mime/type||| *data* |||>>>
-        //var startFlag = packet.search(/<<<.+\|\|\|/);
-        //var endFlag = packet.search(/\|\|\|>>>/);
+        //console.log(packet.length, ' --- ', startFlag, ' / ', endFlag, ': ', packet);
         
         //no stream is open
         //use this.currentStream for the open stream flag DUHHHHH
@@ -64,7 +64,7 @@ DUI.create('Stream', {
             //open a stream, this.currentStream = this.streams[] = '';
             this.currentStream = '';
             
-            console.log('opening a stream');
+            //console.log('opening a stream');
             
             //is there a start flag?
             if(startFlag > -1) {
@@ -73,10 +73,11 @@ DUI.create('Stream', {
                 if(endFlag > -1) {
                 //yes
                     //use the end flag to grab the entire payload in one swoop
-                    this.currentStream += packet.substring(startFlag, endFlag + 3);
+                    var payload = packet.substring(startFlag, endFlag + 3);
+                    this.currentStream += payload;
                     
                     //remove the payload from this chunk
-                    packet = packet.replace(/<\!\[.+\[.+\]\]>/, '');
+                    packet = packet.replace(payload, '');
                     
                     this.closeCurrentStream();
                     
@@ -93,6 +94,8 @@ DUI.create('Stream', {
                 //wtf? no open stream and no start flag means someone fucked up the output
                 //...OR maybe they're sending garbage in front of their first payload. weird.
                 //i guess just ignore it for now?
+                
+                //console.log('GARBAGE PACKET');
             }
         // else we have an open stream
         } else {
@@ -100,11 +103,11 @@ DUI.create('Stream', {
             if(endFlag > -1) {
             //yes
                 //use the end flag to grab the rest of the payload
-                var tempChunk = packet.substring(0, endFlag + 3);
-                this.currentStream += tempChunk;
+                var chunk = packet.substring(0, endFlag + 3);
+                this.currentStream += chunk;
                 
                 //remove the rest of the payload from this chunk
-                packet = packet.replace(tempChunk, '');
+                packet = packet.replace(chunk, '');
                 
                 this.closeCurrentStream();
                 
@@ -121,7 +124,7 @@ DUI.create('Stream', {
     },
     
     closeCurrentStream: function() {
-        console.log('closing a stream');
+        //console.log('closing a stream');
         
         //write stream
         this.streams.push(this.currentStream);

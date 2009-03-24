@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head><title></title></head>
 
@@ -7,25 +9,7 @@
 <script type="text/javascript" src="/jquery.js"></script>
 <script type="text/javascript" src="/DUI/DUI.js"></script>
 <script type="text/javascript" src="/Stream/Stream.js"></script>
-<script type="text/javascript">
-
-//COME WITH ME IF YOU WANT TO LIVE
-var s = new DUI.Stream();
-
-s.listen('text/html', function(payload) {
-    $j('body').append(payload);
-    
-    alert('finished the HTML packet');
-});
-
-s.listen('text/javascript', function(payload) {
-    var tag = '&lt;script type="text/javascript">' + payload + '&lt;/script>';
-    $j(tag).appendTo('body');
-});
-
-s.load('testStreamData.php');
-
-</script>
+<script type="text/javascript" src="/Stream/TestStream.js"></script>
 
 </body>
 

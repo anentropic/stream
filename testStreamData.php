@@ -1,6 +1,6 @@
 <?php
 
-$count = 1024 * 512;
+$count = 1024;
 
 echo '<![text/html[';
 
