@@ -36,6 +36,7 @@
  * @link http://github.com/digg/dui
  *
  */
+(function($) {
 DUI.create('Stream', {
     pong: null,
     lastLength: 0,
@@ -94,17 +95,12 @@ DUI.create('Stream', {
     ping: function() {
         var length = this.req.responseText.length;
         
-        var packet = '';
-        var getPacket = function() {
-            packet = this.req.responseText.substring(this.lastLength, length);
-        }.apply(this);
+        var packet = this.req.responseText.substring(this.lastLength, length);
         
         //Drop the end boundary if this is the last packet
-        var dropPacketBoundary = function() {
-            if(this.req.readyState == 4) {
-                packet = packet.replace(this.boundary + '--', '');
-            }
-        }.apply(this);
+        if(this.req.readyState == 4) {
+            packet = packet.replace(this.boundary + '--', '');
+        }
         
         this.processPacket(packet);
         
@@ -114,27 +110,22 @@ DUI.create('Stream', {
     processPacket: function(packet) {
         if(packet.length < 1) return;
         
-        var startFlag = -1;
-        var findStartFlag = function() {
-            //I don't know if we can count on this, but it's fast as hell
-            startFlag = packet.indexOf(this.boundary);
-        }.apply(this);
+        //I don't know if we can count on this, but it's fast as hell
+        var startFlag = packet.indexOf(this.boundary);
         
         var endFlag = -1;
-        var findEndFlag = function() {
-            
-            //Is there a startFlag?
-            if(startFlag > -1) {
-                if(typeof this.currentStream != 'undefined') {
-                //If there's an open stream, that's an endFlag, not a startFlag
-                    endFlag = startFlag;
-                    startFlag = -1;
-                } else {
-                //No open stream? Ok, valid startFlag. Let's try find an endFlag then.
-                    endFlag = packet.indexOf(this.boundary, startFlag + this.boundary.length);
-                }
+        
+        //Is there a startFlag?
+        if(startFlag > -1) {
+            if(typeof this.currentStream != 'undefined') {
+            //If there's an open stream, that's an endFlag, not a startFlag
+                endFlag = startFlag;
+                startFlag = -1;
+            } else {
+            //No open stream? Ok, valid startFlag. Let's try find an endFlag then.
+                endFlag = packet.indexOf(this.boundary, startFlag + this.boundary.length);
             }
-        }.apply(this);
+        }
         
         //No stream is open
         if(typeof this.currentStream == 'undefined') {
@@ -201,29 +192,22 @@ DUI.create('Stream', {
         //this.streams.push(this.currentStream);
         
         //Get mimetype
-        var mime = '';
-        var payload = '';
-        var mimeAndPayload = '';
-        var findMime = function() {
-            //First, ditch the boundary
-            this.currentStream = this.currentStream.replace(this.boundary + "\n", '');
-            
-            /* The mimetype is the first line after the boundary.
-               Note that RFC 2046 says that there's either a mimetype here or a blank line to default to text/plain,
-               so if the payload starts on the line after the boundary, we'll intentionally ditch that line
-               because it doesn't conform to the spec. QQ more noob, L2play, etc. */
-            mimeAndPayload = this.currentStream.split("\n");
-            
-            mime = mimeAndPayload.shift().split('Content-Type:', 2)[1].split(";", 1)[0].replace(' ', '');
-            
-            //Better to have this null than undefined
-            mime = mime ? mime : null;
-        }.apply(this);
+        //First, ditch the boundary
+        this.currentStream = this.currentStream.replace(this.boundary + "\n", '');
+        
+        /* The mimetype is the first line after the boundary.
+           Note that RFC 2046 says that there's either a mimetype here or a blank line to default to text/plain,
+           so if the payload starts on the line after the boundary, we'll intentionally ditch that line
+           because it doesn't conform to the spec. QQ more noob, L2play, etc. */
+        var mimeAndPayload = this.currentStream.split("\n");
+        
+        var mime = mimeAndPayload.shift().split('Content-Type:', 2)[1].split(";", 1)[0].replace(' ', '');
+        
+        //Better to have this null than undefined
+        mime = mime ? mime : null;
         
         //Get payload
-        var stripPayload = function() {
-            payload = mimeAndPayload.join("\n");
-        }.apply(this);
+        var payload = mimeAndPayload.join("\n");
         
         //Try to fire the listeners for this mimetype
         var _this = this;
@@ -247,6 +231,7 @@ DUI.create('Stream', {
         }
     }
 });
+})(jQuery);
 
 //Yep, I still use this. So what? You wanna fight about it?
 Function.prototype.bind = function() {
