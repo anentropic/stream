@@ -1,3 +1,41 @@
+/**
+ * DUI.Stream: A JavaScript implementation of MXHR
+ *
+ * Copyright (c) 2009, Digg, Inc.
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice, 
+ *   this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice, 
+ *   this list of conditions and the following disclaimer in the documentation 
+ *   and/or other materials provided with the distribution.
+ * - Neither the name of the Digg, Inc. nor the names of its contributors 
+ *   may be used to endorse or promote products derived from this software 
+ *   without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @module DUI.Stream
+ * @author Micah Snyder <micah@digg.com>
+ * @author Jordan Alperin <alpjor@digg.com>
+ * @description A JavaScript implementation of MXHR
+ * @version 0.0.3
+ * @link http://github.com/digg/dui
+ *
+ */
 DUI.create('Stream', {
     pong: null,
     lastLength: 0,
@@ -5,6 +43,7 @@ DUI.create('Stream', {
     listeners: {},
     
     init: function() {
+        //TODO: Cross-browser support might help a bit. Maybe.
         this.req = new XMLHttpRequest();
         
         var _this = this;
@@ -20,8 +59,6 @@ DUI.create('Stream', {
     
     readyStateNanny: function() {
         if(this.req.readyState == 3 && this.pong == null) {
-            //console.log('state 3');
-            
             var contentTypeHeader = this.req.getResponseHeader("Content-Type");
             
             if(contentTypeHeader.indexOf("multipart/mixed") == -1) {
@@ -33,25 +70,21 @@ DUI.create('Stream', {
             } else {
                 this.boundary = '--' + contentTypeHeader.split('"')[1];
                 
-                //console.log(this.boundary);
-                
-                //start pinging
+                //Start pinging
                 this.pong = window.setInterval(this.ping.bind(this), 15);
             }
         }
         
         if(this.req.readyState == 4) {
-            //console.log('state 4');
-            
-            //stop the insanity!
+            //Stop the insanity!
             clearInterval(this.pong);
             
-            //one last ping to clean up
+            //One last ping to clean up
             this.ping();
             
             if(typeof this.listeners.complete != 'undefined') {
                 var _this = this;
-                $j.each(this.listeners.complete, function() {
+                $.each(this.listeners.complete, function() {
                     this.apply(_this);
                 });
             }
@@ -64,10 +97,9 @@ DUI.create('Stream', {
         var packet = '';
         var getPacket = function() {
             packet = this.req.responseText.substring(this.lastLength, length);
-            //packet = this.req.responseText.slice(this.lastLength);
         }.apply(this);
         
-        //drop the end boundary if this is the last packet
+        //Drop the end boundary if this is the last packet
         var dropPacketBoundary = function() {
             if(this.req.readyState == 4) {
                 packet = packet.replace(this.boundary + '--', '');
@@ -82,119 +114,98 @@ DUI.create('Stream', {
     processPacket: function(packet) {
         if(packet.length < 1) return;
         
-        //XML CDATA style packets: <![mime/type[ *data* ]]>
         var startFlag = -1;
         var findStartFlag = function() {
-            //turbo hella slow
-            //startFlag = packet.search(/<\!\[.+\[/);
-            
-            //i don't know if we can count on this, but it's fast as hell
+            //I don't know if we can count on this, but it's fast as hell
             startFlag = packet.indexOf(this.boundary);
         }.apply(this);
         
         var endFlag = -1;
         var findEndFlag = function() {
             
-            //is there a startFlag?
+            //Is there a startFlag?
             if(startFlag > -1) {
                 if(typeof this.currentStream != 'undefined') {
-                //if there's an open stream, that's an endFlag, not a startFlag
+                //If there's an open stream, that's an endFlag, not a startFlag
                     endFlag = startFlag;
                     startFlag = -1;
                 } else {
-                //no open stream? ok, valid startFlag. let's try find an endFlag then.
+                //No open stream? Ok, valid startFlag. Let's try find an endFlag then.
                     endFlag = packet.indexOf(this.boundary, startFlag + this.boundary.length);
                 }
             }
         }.apply(this);
         
-        //console.log(packet.length, ' --- ', startFlag, ' / ', endFlag, ': ', packet);
-        
-        //no stream is open
-        //use this.currentStream for the open stream flag DUHHHHH
+        //No stream is open
         if(typeof this.currentStream == 'undefined') {
-            //open a stream, this.currentStream = this.streams[] = '';
+            //Open a stream
             this.currentStream = '';
             
-            //console.log('opening a stream');
-            
-            //is there a start flag?
+            //Is there a start flag?
             if(startFlag > -1) {
-            //yes
-                //is there an end flag?
+            //Yes
+                //Is there an end flag?
                 if(endFlag > -1) {
-                //yes
-                    //use the end flag to grab the entire payload in one swoop
+                //Yes
+                    //Use the end flag to grab the entire payload in one swoop
                     var payload = packet.substring(startFlag, endFlag);
                     this.currentStream += payload;
                     
-                    //remove the payload from this chunk
+                    //Remove the payload from this chunk
                     packet = packet.replace(payload, '');
                     
                     this.closeCurrentStream();
                     
-                    //start over on the remainder of this packet
+                    //Start over on the remainder of this packet
                     this.processPacket(packet);
                 } else {
-                //no
-                    //grab from the start of the start flag to the end of the chunk
+                //No
+                    //Grab from the start of the start flag to the end of the chunk
                     this.currentStream += packet.substr(startFlag);
                     
-                    //leave this.currentStream set and wait for another packet
+                    //Leave this.currentStream set and wait for another packet
                 }
             } else {
-                //wtf? no open stream and no start flag means someone fucked up the output
-                //...OR maybe they're sending garbage in front of their first payload. weird.
-                //i guess just ignore it for now?
-                
-                //console.log('GARBAGE PACKET');
+                //WTF? No open stream and no start flag means someone fucked up the output
+                //...OR maybe they're sending garbage in front of their first payload. Weird.
+                //I guess just ignore it for now?
             }
-        // else we have an open stream
+        //Else we have an open stream
         } else {
-            //is there an end flag?
+            //Is there an end flag?
             if(endFlag > -1) {
-            //yes
-                //use the end flag to grab the rest of the payload
+            //Yes
+                //Use the end flag to grab the rest of the payload
                 var chunk = packet.substring(0, endFlag);
                 this.currentStream += chunk;
                 
-                //remove the rest of the payload from this chunk
+                //Remove the rest of the payload from this chunk
                 packet = packet.replace(chunk, '');
                 
                 this.closeCurrentStream();
                 
-                //start over on the remainder of this packet
+                //Start over on the remainder of this packet
                 this.processPacket(packet);
             } else {
-            //no
-                //put this whole packet into this.currentStream
+            //No
+                //Put this whole packet into this.currentStream
                 this.currentStream += packet;
                 
-                //wait for another packet
+                //Wait for another packet...
             }
         }
     },
     
     closeCurrentStream: function() {
-        //console.log('closing a stream');
-        
-        //skip all this shit for now
-        /* delete this.currentStream;
-        return; */
-        
-        //write stream
+        //Write stream. Not sure if we need this
         //this.streams.push(this.currentStream);
         
-        //get mimetype
+        //Get mimetype
         var mime = '';
         var payload = '';
         var mimeAndPayload = '';
         var findMime = function() {
-            //this call to String.match is slow as fuck. Womp.
-            //mime = this.currentStream.match(/<\!\[(.+)\[/)[1];
-            //mime = this.currentStream.split('<![', 2)[1].split('[', 1)[0];
-            
-            //first, ditch the boundary
+            //First, ditch the boundary
             this.currentStream = this.currentStream.replace(this.boundary + "\n", '');
             
             /* The mimetype is the first line after the boundary.
@@ -205,38 +216,24 @@ DUI.create('Stream', {
             
             mime = mimeAndPayload.shift().split('Content-Type:', 2)[1].split(";", 1)[0].replace(' ', '');
             
-            //better to have this null than undefined
+            //Better to have this null than undefined
             mime = mime ? mime : null;
-            
-            //console.log("mime:", mime);
         }.apply(this);
         
-        //get payload
+        //Get payload
         var stripPayload = function() {
-            //slowish
-            //payload = this.currentStream.replace(/<\!\[.+?\[/, '').replace(']]>', '');
-            
-            //not as slow
-            //payload = this.currentStream.replace('<![' + mime + '[', '').replace(']]>', '');
-            
-            //fast!
-            /* var mimeFlag = '<![' + mime + '[';
-            var payloadStart = this.currentStream.indexOf(mimeFlag) + mimeFlag.length;
-            var payloadEnd = this.currentStream.indexOf(']]>');
-            payload = this.currentStream.slice(payloadStart, payloadEnd); */
-            
             payload = mimeAndPayload.join("\n");
         }.apply(this);
         
-        //try to fire the listeners for this mimetype
+        //Try to fire the listeners for this mimetype
         var _this = this;
         if(typeof this.listeners[mime] != 'undefined') {
-            $j.each(this.listeners[mime], function() {
+            $.each(this.listeners[mime], function() {
                 this.apply(_this, [payload]);
             });
         }
         
-        //set this.currentStream = null
+        //Set this.currentStream = null
         delete this.currentStream;
     },
     
@@ -251,6 +248,7 @@ DUI.create('Stream', {
     }
 });
 
+//Yep, I still use this. So what? You wanna fight about it?
 Function.prototype.bind = function() {
     var __method = this, object = arguments[0], args = [];
 
@@ -264,5 +262,6 @@ Function.prototype.bind = function() {
 
 /* GLOSSARY
     packet: the amount of data sent in one ping interval
-    payload: an entire piece of content, contained between <<<mime/type||| and |||>>>
+    payload: an entire piece of content, contained between multipart boundaries
+    stream: the data sent between opening and closing an XHR. depending on how you implement MHXR, that could be a while.
 */

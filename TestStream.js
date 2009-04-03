@@ -14,7 +14,7 @@ TestStream = DUI.Class.create({
         
         //echo '<object type="image/jpeg" data="data:image/jpeg;base64,' . base64_encode($imgFile) . '"></object>';
         s.listen('image/jpeg', function(payload) {
-            $j('#stream').append('<object type="image/jpeg" data="data:image/jpeg;base64,' + payload + '" width="10" height="10"></object>');
+            $j('#stream').append('<object type="image/jpeg" data="data:image/jpeg;base64,' + payload + '" width="20" height="20"></object>');
             
             //console.log(payload);
         });
@@ -25,7 +25,7 @@ TestStream = DUI.Class.create({
             var normalStart = (new Date).getTime();
             var imgs = '';
             for (var i = 0; i < 300; i++) {
-                imgs += '<img src="http://blog.dfltr.com/noCacheImage.php?nocache=' + (new Date).getTime() * Math.random() + '" width="10" height="10" />';
+                imgs += '<img src="http://blog.dfltr.com/noCacheImage.php?nocache=' + (new Date).getTime() * Math.random() + '" width="20" height="20" />';
             }
             
             //console.log($j('#normal'));
