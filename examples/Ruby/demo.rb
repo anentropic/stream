@@ -35,11 +35,11 @@ class MXHRStreamer
     def stream
         stream = ""
         @payloads.each { |payload, content_type|
-            stream += "--|||\r\n"
-            stream += "Content-Type: " + content_type + "\r\n"
+            stream += "--|||\n"
+            stream += "Content-Type: " + content_type + "\n"
             stream += payload
         }
-        stream += "--|||--\r\n"
+        stream += "--|||--"
         @payloads.clear
 
         return stream
@@ -55,7 +55,7 @@ javascript = "console.log('huuurrrr');/* fake data */"
 # Simple test. Add some payloads (images and javascript).
 
 300.times { |n|  
-    streamer.add_image(image_data, "image/jpeg")
+    streamer.add_image(image_data, "image/gif")
 }
 10.times { |n|
     streamer.add_javascript(javascript)

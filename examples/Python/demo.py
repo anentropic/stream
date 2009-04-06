@@ -33,11 +33,11 @@ class MXHRStreamer(object):
     def stream(self):
         stream = ""
         for payload, content_type in self.payloads:
-            stream += "--|||\r\n"
-            stream += "Content-Type: %s\r\n" % content_type
+            stream += "--|||\n"
+            stream += "Content-Type: %s\n" % content_type
             stream += payload
             
-        stream += "--|||--\r\n"
+        stream += "--|||--"
         self.payloads = []
         
         return stream
@@ -56,7 +56,7 @@ def main():
     
     """
     for i in range(1,300):
-        streamer.add_image(image_data, "image/jpeg")
+        streamer.add_image(image_data, "image/gif")
     
     for i in range(1,10):
         streamer.add_javascript(javascript)
@@ -69,7 +69,7 @@ def main():
     """
     print "MIME-Version: 1.0"
     print "Content-Type: multipart/mixed; boundary=\"|||\""
-    print streamer.stream()
+    print streamer.stream(), 
     
 if __name__ == '__main__':
     main()

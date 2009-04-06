@@ -24,8 +24,8 @@
 //COME WITH ME IF YOU WANT TO LIVE
 var s = new DUI.Stream();
 
-s.listen('image/jpeg', function(payload) {
-    $j('#stream').append('<object type="image/jpeg" data="data:image/jpeg;base64,' + payload + '" width="20" height="20"></object>');
+s.listen('image/gif', function(payload) {
+    $j('#stream').append('<object type="image/gif" data="data:image/gif;base64,' + payload + '" width="20" height="20"></object>');
 });
 
 s.listen('complete', function() {
