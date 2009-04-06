@@ -51,11 +51,11 @@ sub stream
     my ($self) = @_;
     my $stream = '';
     foreach my $payload (@{$self->{_payloads}}) {
-        $stream .= "--|||\r\n";
-        $stream .= "Content-Type: " . $$payload{'content_type'} . "\r\n";
+        $stream .= "--|||\n";
+        $stream .= "Content-Type: " . $$payload{'content_type'} . "\n";
         $stream .= $$payload{'payload'};
     }
-    $stream .= "--|||--\r\n";
+    $stream .= "--|||--\n";
     return $stream;
 }
 
