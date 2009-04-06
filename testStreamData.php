@@ -18,7 +18,7 @@ if(!isset($_GET['payloads'])) {
 $count = 1024 * $size;
 
 
-$imgFile = file_get_contents('hippo.jpg');
+$imgFile = file_get_contents('img/32x32-digg-guy.gif');
 
 for($i = 0; $i < 300 ; $i++) {
     echo "--|||
