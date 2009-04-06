@@ -67,12 +67,12 @@ public class MXHRStreamer {
 		int numPayloads = payloads.size();
 		
 		for (int i = 0; i < numPayloads; i++) {
-			sb.append("\r\n--" + boundry  + "\r\n")
-				.append("Content-Type: " + payloads.get(i).contentType + "\r\n")
+			sb.append("\n--" + boundry  + "\n")
+				.append("Content-Type: " + payloads.get(i).contentType + "\n")
 				.append(payloads.get(i).payload);
 		}
 		
-		sb.append("\r\n--" + boundry + "--\r\n");
+		sb.append("\n--" + boundry + "--\n");
 		return sb.toString();
 	}
 	
