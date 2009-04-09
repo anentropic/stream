@@ -16,22 +16,22 @@ while (<IMAGEFILE>) {
 }
 close IMAGEFILE;
 
-my $javascript = "console.log('huuurrrr');/* fake data */\n";
+my $script = "console.log('huuurrrr');/* fake data */\n";
 
 my $streamer = new MXHRStreamer();
 
 # Simple test. Add some payloads (images and javascript).
 
 for (my $i = 0; $i < 200; $i++) {
-    $streamer->add_image($image, 'image/gif');
+    $streamer->addImage($image, 'image/gif');
 }
 for (my $i = 0; $i < 10; $i++) {
-    $streamer->add_javascript($javascript);
+    $streamer->addJavaScript($script);
 }
 
 # Output the final payload to browser 
 # This is just an example, so remember, you need to set the MIME-Version and 
 # Content-Type headers in your favorite framework
-print "MIME-Version: 1.0\r\n";
-print "Content-Type: multipart/mixed; boundary=\"|||\"\r\n\r\n";
+print "MIME-Version: 1.0\n";
+print "Content-Type: multipart/mixed; boundary=\"" . $streamer->getBoundary() . "\"\n\n";
 print $streamer->stream();

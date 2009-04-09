@@ -20,32 +20,32 @@ sub new
     return $self;
 }
 
-sub get_boundary
+sub getBoundary
 {
     my ($self) = @_;
     return $self->{_boundary};
 }
 
-sub add_image
+sub addImage
 {
     my ($self, $image, $content_type) = @_;
     my $encoded = encode_base64($image);
-    $self->add_payload($encoded, $content_type);
+    $self->addPayload($encoded, $content_type);
 }
 
-sub add_html
+sub addHtml
 {
     my ($self, $text) = @_;
-    $self->add_payload($text, 'text/html');
+    $self->addPayload($text, 'text/html');
 }
 
-sub add_javascript
+sub addJavaScript
 {
     my ($self, $javascript) = @_;
-    $self->add_payload($javascript, 'text/javascript');
+    $self->addPayload($javascript, 'text/javascript');
 }
 
-sub add_payload
+sub addPayload
 {
     my ($self, $payload, $content_type) = @_;
     push(@{$self->{_payloads}},
@@ -59,11 +59,11 @@ sub stream
     my ($self) = @_;
     my $stream = '';
     foreach my $payload (@{$self->{_payloads}}) {
-        $stream .= "--" . $self->{_boundary} . "\n";
+        $stream .= "--" . $self->getBoundary() . "\n";
         $stream .= "Content-Type: " . $$payload{'content_type'} . "\n";
         $stream .= $$payload{'payload'};
     }
-    $stream .= "--" . $self->{_boundary} . "--\n";
+    $stream .= "--" . $self->getBoundary() . "--\n";
     return $stream;
 }
 
