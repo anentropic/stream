@@ -7,6 +7,7 @@
 
 package MXHRStreamer;
 use MIME::Base64;
+use Digest::MD5 qw(md5_base64);
 use strict;
 
 sub new
@@ -14,8 +15,15 @@ sub new
     my $class = shift;
     my $self = {};
     $self->{_payloads} = [];
+    $self->{_boundary} = '_' . time . '-' . md5_base64(rand(2**32));
     bless $self, $class;
     return $self;
+}
+
+sub get_boundary
+{
+    my ($self) = @_;
+    return $self->{_boundary};
 }
 
 sub add_image
@@ -51,11 +59,11 @@ sub stream
     my ($self) = @_;
     my $stream = '';
     foreach my $payload (@{$self->{_payloads}}) {
-        $stream .= "--|||\n";
+        $stream .= "--" . $self->{_boundary} . "\n";
         $stream .= "Content-Type: " . $$payload{'content_type'} . "\n";
         $stream .= $$payload{'payload'};
     }
-    $stream .= "--|||--\n";
+    $stream .= "--" . $self->{_boundary} . "--\n";
     return $stream;
 }
 
