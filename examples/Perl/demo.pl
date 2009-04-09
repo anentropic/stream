@@ -22,7 +22,7 @@ my $streamer = new MXHRStreamer();
 
 # Simple test. Add some payloads (images and javascript).
 
-for (my $i = 0; $i < 200; $i++) {
+for (my $i = 0; $i < 300; $i++) {
     $streamer->addImage($image, 'image/gif');
 }
 for (my $i = 0; $i < 10; $i++) {
