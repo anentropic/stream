@@ -11,11 +11,18 @@ Copyright (c) 2009 Digg Inc. All rights reserved.
 
 import os
 import base64
+import random
+import md5
+from time import time
 
 class MXHRStreamer(object):
     """Simple class that handles streaming multipart payloads"""
     def __init__(self):
         self.payloads = []
+        self.boundary = "_%d-%s" % (time(), md5.new(str(random.randint(0, 2**32))).hexdigest())
+        
+    def get_boundary(self):
+        return self.boundary
         
     def add_image(self, image, content_type):
         encoded = base64.b64encode(image)
@@ -33,11 +40,11 @@ class MXHRStreamer(object):
     def stream(self):
         stream = ""
         for payload, content_type in self.payloads:
-            stream += "--|||\n"
+            stream += "--%s\n" % self.get_boundary() 
             stream += "Content-Type: %s\n" % content_type
-            stream += payload
+            stream += "%s\n" % payload
             
-        stream += "--|||--"
+        stream += "--%s--" % self.get_boundary() 
         self.payloads = []
         
         return stream
@@ -68,7 +75,7 @@ def main():
     
     """
     print "MIME-Version: 1.0"
-    print "Content-Type: multipart/mixed; boundary=\"|||\""
+    print "Content-Type: multipart/mixed; boundary=\"%s\"\n" % streamer.get_boundary()
     print streamer.stream(), 
     
 if __name__ == '__main__':

@@ -9,14 +9,21 @@ Copyright (c) 2009 Digg Inc. All rights reserved.
 =end
 
 require 'base64'
+require 'digest'
 
 class MXHRStreamer
     def initialize
+        srand()
         @payloads = []
+        @boundary = "_%d-%s" % [ Time.now.to_i, Digest::MD5.hexdigest(rand(2**32).to_s) ]
+    end
+
+    def get_boundary
+        return @boundary
     end
 
     def add_image(image, content_type)
-        encoded = Base64.b64encode(image)
+        encoded = Base64.encode64(image)
         self.add_payload(encoded, content_type)
     end
 
@@ -35,11 +42,11 @@ class MXHRStreamer
     def stream
         stream = ""
         @payloads.each { |payload, content_type|
-            stream += "--|||\n"
-            stream += "Content-Type: " + content_type + "\n"
-            stream += payload
+            stream += "--%s\n" % self.get_boundary() 
+            stream += "Content-Type: %s\n\n" % content_type 
+            stream += "%s\n" % payload
         }
-        stream += "--|||--"
+        stream += "--" + self.get_boundary() + "--"
         @payloads.clear
 
         return stream
@@ -65,6 +72,6 @@ javascript = "console.log('huuurrrr');/* fake data */"
 # This is just an example, so remember, you need to set the MIME-Version and 
 # Content-Type headers in your favorite framework
 
-puts "MIME-Version: 1.0"
-puts "Content-Type: multipart/mixed; boundary=\"|||\""
+puts "MIME-Version: 1.0\n"
+puts "Content-Type: multipart/mixed; boundary=\"" + streamer.get_boundary() + "\"\n\n"
 puts streamer.stream()
