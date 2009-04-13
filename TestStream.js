@@ -3,29 +3,32 @@ TestStream = DUI.Class.create({
         //COME WITH ME IF YOU WANT TO LIVE
         var s = new DUI.Stream();
         
+        var content = '';
+        
         s.listen('text/html', function(payload) {
-            //$j('body').append(payload);
+            content += payload;
         });
         
         s.listen('text/javascript', function(payload) {
             //$j('body').append('<script type="text/javascript">' + payload + '</script>');
-            console.log(payload);
+            //console.log(payload);
         });
         
         //echo '<object type="image/jpeg" data="data:image/jpeg;base64,' . base64_encode($imgFile) . '"></object>';
         s.listen('image/jpeg', function(payload) {
-            $j('#stream').append('<object type="image/jpeg" data="data:image/jpeg;base64,' + payload + '" width="20" height="20"></object>');
+            //$j('#stream').append('<object width="20" height="20" type="image/jpeg" data="data:image/jpeg;base64,' + payload + '"></object>');
             
             //console.log(payload);
         });
         
         s.listen('complete', function() {
-            console.log('stream took:', (new Date).getTime() - streamStart);
+            //console.log('stream took:', (new Date).getTime() - streamStart);
+            $j('#stream').append(content + '<p>stream took: ' + ((new Date).getTime() - streamStart) + '</p>');
             
             var normalStart = (new Date).getTime();
             var imgs = '';
             for (var i = 0; i < 300; i++) {
-                imgs += '<img src="http://blog.dfltr.com/noCacheImage.php?nocache=' + (new Date).getTime() * Math.random() + '" width="20" height="20" />';
+                imgs += '<img src="noCacheImage.php?nocache=' + (new Date).getTime() * Math.random() + '" width="20" height="20" />';
             }
             
             //console.log($j('#normal'));
@@ -33,7 +36,7 @@ TestStream = DUI.Class.create({
             $j('#normal').append(imgs);
             
             $j('img:last', '#normal').load(function() {
-                console.log('normal took:', (new Date).getTime() - normalStart);
+                $j('#normal').append('<p>Normal took: ' + ((new Date).getTime() - normalStart) + '</p>');
             });
         });
         

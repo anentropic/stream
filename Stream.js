@@ -1,5 +1,5 @@
 /**
- * DUI.Stream: A JavaScript implementation of MXHR
+ * DUI.Stream: A JavaScript MXHR client
  *
  * Copyright (c) 2009, Digg, Inc.
  * All rights reserved.
@@ -31,7 +31,7 @@
  * @module DUI.Stream
  * @author Micah Snyder <micah@digg.com>
  * @author Jordan Alperin <alpjor@digg.com>
- * @description A JavaScript implementation of MXHR
+ * @description A JavaScript MXHR client
  * @version 0.0.3
  * @link http://github.com/digg/dui
  *
@@ -44,17 +44,30 @@ DUI.create('Stream', {
     listeners: {},
     
     init: function() {
-        //TODO: Cross-browser support might help a bit. Maybe.
-        this.req = new XMLHttpRequest();
+        
+    },
+    
+    load: function(url) {
+        //These versions of XHR are known to work with MXHR
+        try { this.req = new ActiveXObject('MSXML2.XMLHTTP.6.0'); } catch(nope) {
+            try { this.req = new ActiveXObject('MSXML3.XMLHTTP'); } catch(nuhuh) {
+                try { this.req = new XMLHttpRequest(); } catch(noway) {
+                    throw new Error('Could not find supported version of XMLHttpRequest.');
+                }
+            }
+        }
+        
+        //These versions don't support readyState == 3 header requests
+        //try { this.req = new ActiveXObject('Microsoft.XMLHTTP'); } catch(err) {}
+        //try { this.req = new ActiveXObject('MSXML2.XMLHTTP.3.0'); } catch(err) {}
+        
+        this.req.open('GET', url, true);
         
         var _this = this;
         this.req.onreadystatechange = function() {
             _this.readyStateNanny.apply(_this);
         }
-    },
-    
-    load: function(url) {
-        this.req.open('GET', url, true);
+        
         this.req.send(null);
     },
     
@@ -77,6 +90,8 @@ DUI.create('Stream', {
         }
         
         if(this.req.readyState == 4) {
+            //var contentTypeHeader = this.req.getResponseHeader("Content-Type");
+            
             //Stop the insanity!
             clearInterval(this.pong);
             
