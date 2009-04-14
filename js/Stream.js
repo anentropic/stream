@@ -112,11 +112,6 @@ DUI.create('Stream', {
         
         var packet = this.req.responseText.substring(this.lastLength, length);
         
-        //Drop the end boundary if this is the last packet
-        if(this.req.readyState == 4) {
-            packet = packet.replace(this.boundary + '--', '');
-        }
-        
         this.processPacket(packet);
         
         this.lastLength = length;

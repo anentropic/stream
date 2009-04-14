@@ -1,52 +1,4 @@
-<?php
-
-header('MIME-Version: 1.0');
-header('Content-Type: multipart/mixed; boundary="|||"');
-
-$count = 1024 * 3;
-
-
-/* $imgFile = file_get_contents('img/32x32-digg-guy.gif');
-
-for($i = 0; $i < 300 ; $i++) {
-    echo "--|||
-Content-Type: image/gif
-" . base64_encode($imgFile);
-}
-
-echo '--|||--';
-exit; */
-
-/* echo "--|||
-Content-Type: text/javascript */
-/*";
-for($i = 0; $i < $count ; $i++) {
-    echo 'Y';
-}
-echo "*/
-/* console.log('huuurrrr');"; */
-
-/* for($i = 1; $i < $payloads; $i++) {
-    echo '
---|||
-Content-Type: text/html
-';
-    
-    echo '<em>';
-    
-    for($j = 0; $j < $count ; $j++) {
-        echo 'X';
-    }
-    
-    echo '</em>';
-}
-
-echo '--|||--'; */
-
-
-
-//Let's store our heinous chunk of text down here
-$lipsum = "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque congue nunc ut justo. In placerat tincidunt enim. Praesent a risus nec leo interdum tincidunt. Pellentesque faucibus neque. Suspendisse risus. Aenean fermentum pharetra mi. Aliquam erat volutpat. Praesent eleifend est a ligula. Donec quis lacus. Nullam vitae nulla. Mauris id ipsum. Sed lobortis varius nisi. Integer vitae erat sed elit sollicitudin faucibus. Donec in turpis iaculis massa iaculis pulvinar. Curabitur tincidunt quam dictum massa. Suspendisse ac est. Nunc urna. Nullam euismod feugiat nisi. In hac habitasse platea dictumst. Aliquam erat volutpat.</p>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque congue nunc ut justo. In placerat tincidunt enim. Praesent a risus nec leo interdum tincidunt. Pellentesque faucibus neque. Suspendisse risus. Aenean fermentum pharetra mi. Aliquam erat volutpat. Praesent eleifend est a ligula. Donec quis lacus. Nullam vitae nulla. Mauris id ipsum. Sed lobortis varius nisi. Integer vitae erat sed elit sollicitudin faucibus. Donec in turpis iaculis massa iaculis pulvinar. Curabitur tincidunt quam dictum massa. Suspendisse ac est. Nunc urna. Nullam euismod feugiat nisi. In hac habitasse platea dictumst. Aliquam erat volutpat.</p>
 
 <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque quis nulla porttitor sapien facilisis tempus. Duis dapibus ligula ut diam. Nunc libero diam, consequat in, bibendum vel, commodo ut, nulla. Nam mollis nulla vehicula leo. Morbi imperdiet condimentum lorem. Maecenas molestie accumsan lorem. Proin nunc nisi, condimentum sed, laoreet ac, adipiscing vitae, sem. Aliquam fermentum. Phasellus dui. Morbi volutpat, tortor vel ultrices ultricies, diam dolor bibendum arcu, sit amet congue ante lorem vel leo. Phasellus urna. Aliquam posuere, purus mattis condimentum rutrum, turpis diam luctus risus, sit amet faucibus nulla diam nec purus. Mauris ac lacus.</p>
 
@@ -64,13 +16,4 @@ $lipsum = "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque c
 
 <p>Pellentesque tortor. Donec blandit massa vitae urna. Ut iaculis ipsum. Curabitur sem nisi, fringilla nec, pretium vel, faucibus pulvinar, leo. Nullam egestas. Aliquam faucibus dignissim odio. Maecenas non massa. Proin tristique augue. Morbi rhoncus. Proin malesuada vestibulum nunc. Vestibulum aliquam sagittis nunc. Integer id felis. Maecenas eu velit. Fusce convallis elit sit amet nulla.</p>
 
-<p>Proin fermentum, felis quis auctor blandit, tortor dui ornare est, non porta augue erat nec est. Curabitur eu justo. Etiam dignissim dolor a justo. Pellentesque a lectus. Duis elementum elementum nisl. Fusce urna nibh, aliquam a, luctus non, facilisis quis, nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed eu massa eget nisl volutpat rhoncus. Nunc orci. Aenean a metus sit amet est volutpat tincidunt. Donec vel tellus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam non eros ut mi venenatis blandit. Cras vel purus non odio viverra lacinia. Nullam fringilla, ligula eu viverra adipiscing, arcu augue luctus sem, vulputate venenatis dolor justo a libero.</p>";
-
-for($i = 0; $i <= 10; $i++) {
-    echo '
---|||
-Content-Type: text/html
-' . $lipsum;
-}
-
-?>
+<p>Proin fermentum, felis quis auctor blandit, tortor dui ornare est, non porta augue erat nec est. Curabitur eu justo. Etiam dignissim dolor a justo. Pellentesque a lectus. Duis elementum elementum nisl. Fusce urna nibh, aliquam a, luctus non, facilisis quis, nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed eu massa eget nisl volutpat rhoncus. Nunc orci. Aenean a metus sit amet est volutpat tincidunt. Donec vel tellus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam non eros ut mi venenatis blandit. Cras vel purus non odio viverra lacinia. Nullam fringilla, ligula eu viverra adipiscing, arcu augue luctus sem, vulputate venenatis dolor justo a libero.</p>
