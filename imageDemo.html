@@ -31,31 +31,36 @@
 
 <script type="text/javascript">
 
-var s = new DUI.Stream();
+if($j.browser.msie) {
+    alert('Sorry, IE still handles object tags kind of stupidly, so this demo won\'t work for you yet. Try it it Firefox, it\'s pretty cool :)');
+} else {
 
-s.listen('image/gif', function(payload) {
-    $j('#stream').append('<object type="image/gif" data="data:image/gif;base64,' + payload + '" width="20" height="20"></object>');
-});
-
-s.listen('complete', function() {
-    $j('#stream').prepend('<p>Stream took: ' + ((new Date).getTime() - streamStart) + 'ms</p>');
+    var s = new DUI.Stream();
     
-    var normalStart = (new Date).getTime();
-    var imgs = '';
-    for (var i = 0; i < 300; i++) {
-        imgs += '<img src="img/32x32-digg-guy.gif?nocache=' + (new Date).getTime() * Math.random() +    '" width="20" height="20" />';
-    }
-    
-    $j('#normal').append(imgs);
-    
-    $j('img:last', '#normal').load(function() {
-        $j('#normal').prepend('<p>Normal, uncached took: ' + ((new Date).getTime() - normalStart) + 'ms</p>');
+    s.listen('image/gif', function(payload) {
+        $j('#stream').append('<object type="image/gif" data="data:image/gif;base64,' + payload + '" width="20" height="20"></object>');
     });
     
-});
-
-var streamStart = (new Date).getTime();
-s.load('testImageData.php');
+    s.listen('complete', function() {
+        $j('#stream').prepend('<p>Stream took: ' + ((new Date).getTime() - streamStart) + 'ms</p>');
+        
+        var normalStart = (new Date).getTime();
+        var imgs = '';
+        for (var i = 0; i < 300; i++) {
+            imgs += '<img src="img/32x32-digg-guy.gif?nocache=' + (new Date).getTime() * Math.random() +    '" width="20" height="20" />';
+        }
+        
+        $j('#normal').append(imgs);
+        
+        $j('img:last', '#normal').load(function() {
+            $j('#normal').prepend('<p>Normal, uncached took: ' + ((new Date).getTime() - normalStart) + 'ms</p>');
+        });
+        
+    });
+    
+    var streamStart = (new Date).getTime();
+    s.load('testImageData.php');
+}
 
 </script>
 
