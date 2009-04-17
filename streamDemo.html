@@ -3,7 +3,7 @@
 
 <head><title></title>
 
-    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
     <script type="text/javascript" src="js/DUI.js"></script>
     <script type="text/javascript" src="js/Stream.js"></script>
     
@@ -42,32 +42,32 @@ s.listen('text/html', function(payload) {
 });
 
 s.listen('complete', function() {
-    $j('#stream').append('<p>Stream took: ' + ((new Date).getTime() - streamStart) + 'ms</p>' + content);
+    $('#stream').append('<p>Stream took: ' + ((new Date).getTime() - streamStart) + 'ms</p>' + content);
     
     var normalStart = (new Date).getTime();
     
     for(var i = 0; i < 9; i++) {
-        $j.ajax({
+        $.ajax({
             'url': 'loremIpsum.html',
             'async': true,
             'type': 'GET',
             'dataType': 'html',
             
             'success' : function(html) {
-                $j('#normal').append(html);
+                $('#normal').append(html);
             }
         });
     }
     
-    $j.ajax({
+    $.ajax({
         'url': 'loremIpsum.html',
         'async': true,
         'type': 'GET',
         'dataType': 'html',
         
         'success' : function(html) {
-            $j('#normal').append(html);
-            $j('#normal').prepend('<p>Normal took: ' + ((new Date).getTime() - normalStart) + 'ms</p>');
+            $('#normal').append(html);
+            $('#normal').prepend('<p>Normal took: ' + ((new Date).getTime() - normalStart) + 'ms</p>');
         }
     });
 });

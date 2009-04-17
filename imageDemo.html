@@ -3,7 +3,7 @@
 
 <head><title></title>
 
-    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
     <script type="text/javascript" src="js/DUI.js"></script>
     <script type="text/javascript" src="js/Stream.js"></script>
     
@@ -31,18 +31,18 @@
 
 <script type="text/javascript">
 
-if($j.browser.msie) {
+if($.browser.msie) {
     alert('Sorry, IE still handles object tags kind of stupidly, so this demo won\'t work for you yet. Try it in Firefox, it\'s pretty cool :)');
 } else {
 
     var s = new DUI.Stream();
     
     s.listen('image/gif', function(payload) {
-        $j('#stream').append('<object type="image/gif" data="data:image/gif;base64,' + payload + '" width="20" height="20"></object>');
+        $('#stream').append('<object type="image/gif" data="data:image/gif;base64,' + payload + '" width="20" height="20"></object>');
     });
     
     s.listen('complete', function() {
-        $j('#stream').prepend('<p>Stream took: ' + ((new Date).getTime() - streamStart) + 'ms</p>');
+        $('#stream').prepend('<p>Stream took: ' + ((new Date).getTime() - streamStart) + 'ms</p>');
         
         var normalStart = (new Date).getTime();
         var imgs = '';
@@ -50,10 +50,10 @@ if($j.browser.msie) {
             imgs += '<img src="img/32x32-digg-guy.gif?nocache=' + (new Date).getTime() * Math.random() +    '" width="20" height="20" />';
         }
         
-        $j('#normal').append(imgs);
+        $('#normal').append(imgs);
         
-        $j('img:last', '#normal').load(function() {
-            $j('#normal').prepend('<p>Normal, uncached took: ' + ((new Date).getTime() - normalStart) + 'ms</p>');
+        $('img:last', '#normal').load(function() {
+            $('#normal').prepend('<p>Normal, uncached took: ' + ((new Date).getTime() - normalStart) + 'ms</p>');
         });
         
     });
