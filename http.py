@@ -90,7 +90,7 @@ class StreamingMultipartHttpResponse(MultipartHttpResponse):
     """
     def _make_body(self, parts):
         for type,body in parts:
-            yield '%(boundary)s\r\nContent-Type: %(type)s;\r\nDibble: blah\r\n\r\n%(body)s\r\n' % {
+            yield '%(boundary)s\r\nContent-Type: %(type)s;\r\n\r\n%(body)s\r\n' % {
                 'boundary': self.get_boundary(),
                 'type': type,
                 'body': body
